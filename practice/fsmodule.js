@@ -1,4 +1,4 @@
-import { log } from "console";
+
 import fs from "fs";
 
 
@@ -33,32 +33,35 @@ import fs from "fs";
 
 
 //different permissions
-/*Read/Write/Execute for Owner, Group, and Others (Full permissions):
-
+/*
+Read/Write/Execute for Owner, Group, and Others (Full permissions):
 Octal: 0o777
 Symbolic: rwxrwxrwx
-Read/Write for Owner, Read for Group and Others:
 
+
+Read/Write for Owner, Read for Group and Others:
 Octal: 0o644
 Symbolic: rw-r--r--
-Read/Write/Execute for Owner, Read/Execute for Group and Others:
 
+
+Read/Write/Execute for Owner, Read/Execute for Group and Others:
 Octal: 0o755
 Symbolic: rwxr-xr-x
-Read/Write for Owner, Read/Execute for Group and Others:
 
+Read/Write for Owner, Read/Execute for Group and Others:
 Octal: 0o755
 Symbolic: rw-r-xr-x
-Read/Write for Owner, Read for Group, Read/Execute for Others:
 
+
+Read/Write for Owner, Read for Group, Read/Execute for Others:
 Octal: 0o644
 Symbolic: rw-r--r--
-Read/Execute for Owner, Group, and Others:
 
+Read/Execute for Owner, Group, and Others:
 Octal: 0o555
 Symbolic: r-xr-xr-x
-Read/Write for Owner, No Permissions for Group and Others:
 
+Read/Write for Owner, No Permissions for Group and Others:
 Octal: 0o600
 Symbolic: rw------- */
 
