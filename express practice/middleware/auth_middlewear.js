@@ -1,5 +1,7 @@
 
 
+//middle wear which has three para req res and next
+
 export const  middle = (req,res,next)=>{
 
     const username=req.body.username;

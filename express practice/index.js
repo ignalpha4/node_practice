@@ -1,18 +1,16 @@
 import express from "express";
 import cors from "cors";
 import {indexRoute} from './routers/auth_routes.js';
-const app=express();
 
+
+const port=3000;
+const app=express();
 
 app.use(express.json());
 app.use(cors());
 
 
-const port=3000;
-
-
 app.use("/api",indexRoute);
-
 
 
 app.listen(port,()=>{
