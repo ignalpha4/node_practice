@@ -26,7 +26,7 @@ export const findUser = (req,res)=>{
     });
 
     res.send(found_user);
-
+ 
 }
 
 export const deleteUser = (req,res)=>{

@@ -5,6 +5,8 @@ import userRoutes from './Routes/users.js'
 const app=express();
 const PORT=5000;
 
+
+//to specify that the data that is sent is json
 app.use(bodyParser.json());
 
 

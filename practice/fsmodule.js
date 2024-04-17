@@ -59,7 +59,7 @@ Symbolic: rw-r--r--
 
 Read/Execute for Owner, Group, and Others:
 Octal: 0o555
-Symbolic: r-xr-xr-x
+Symbolic: r-xr-xr-x 
 
 Read/Write for Owner, No Permissions for Group and Others:
 Octal: 0o600
@@ -68,6 +68,6 @@ Symbolic: rw------- */
 fs.writeFile("sample.txt","hello world",{mode:0o600},(err)=>{
     if(err){
         console.error("error",err);
-    }
+    } 
     console.log("content written successfully");
 })
