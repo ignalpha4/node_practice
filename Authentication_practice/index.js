@@ -10,6 +10,7 @@ app.use(cors());
 
 app.use("/api",indexRoute);
 
+
 app.listen(port,()=>{
     console.log( `Listening on Port ${port}`);
 })
