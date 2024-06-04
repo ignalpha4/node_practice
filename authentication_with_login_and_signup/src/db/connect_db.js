@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const connect_db =()=>{
-    mongoose.connect("mongodb+srv://shubhamtempacc:m4z2paUuPbvnChKy@cluster0.dzumnro.mongodb.net/user_authentication?retryWrites=true&w=majority&appName=Cluster0")
+    mongoose.connect("mongodb://localhost:27017")
     .then(()=>{
         console.log("Connected to DB")
     })
