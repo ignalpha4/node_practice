@@ -14,14 +14,13 @@ export const addItem = async(req,res)=>{
 
     console.log("found profile details:",foundProfile);
 
-    if(foundProfile.userId != userId){
+    if(foundProfile.userId != req.user){
         res.status(200).json({message:"User not logged IN"});
     }
     
     const {productId}= req.body;
 
     const foundCart = await cart.findOne({profileId});
-
 
     const itemIndex = foundCart.items.findIndex(item=>{
         if(item.productId === productId){

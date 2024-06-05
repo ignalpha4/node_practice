@@ -5,7 +5,7 @@ export const auth_profile=(req,res,next)=>{
     try {
         const token = req.headers.authorization?.split(' ')[1];
 
-    console.log(token);
+ 
 
     if(!token){
         res.status(404).json({message:"token not found"});
@@ -22,7 +22,8 @@ export const auth_profile=(req,res,next)=>{
    
     console.log("This is decoded part ",decoded);
     req.profile = decoded.profileId;
-    req.user =decoded.userId;
+    
+    req.user_id =decoded.userId;
 
     next();
 

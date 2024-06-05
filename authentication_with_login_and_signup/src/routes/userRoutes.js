@@ -9,7 +9,6 @@ router.post("/signup",signupHandler);
 
 router.post("/login",loginHandler);
 
-
 router.get("/",authenticate,getInfo);
 
 router.patch("/",authenticate,updateInfo);
