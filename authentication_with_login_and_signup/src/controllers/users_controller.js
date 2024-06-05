@@ -1,6 +1,5 @@
 import { userDetails } from "../models/user.model.js"
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken'
 import { generateToken } from "../utils/jwt.js";
 
 
@@ -40,7 +39,7 @@ export const loginHandler=async(req,res)=>{
 
         if(!user_info){
             res.status(404).json({message:"User not found"});
-            throw new Error("User not found");
+
         }
 
         const match_pass = await bcrypt.compare(password,user_info.password);
@@ -54,7 +53,6 @@ export const loginHandler=async(req,res)=>{
             res.status(401).json({message:"Login Failed!!"})
         }
 
-        user_info.isLoggedIn = true ;
 
         await user_info.save();
 
@@ -67,12 +65,25 @@ export const loginHandler=async(req,res)=>{
 
 export const getInfo=async(req,res)=>{
 
-    const {user_id} = req.params;
+    try {
 
-    const  user= await userDetails.findById(user_id);
-    console.log(user);
+        const {user_id} = req.user;
 
-    res.status(200).json({user});
+        const  user= await userDetails.findById(user_id);
+      
+        if(!user){
+            console.log("User not found!!");
+            res.status(200).json({message:"User not found"});
+        }
+    
+        res.status(200).json({user});
+
+    } catch (error) {
+        
+        console.log(error);
+    }
+
+
 }
 
 export const updateInfo = async (req,res)=>{
@@ -82,6 +93,11 @@ export const updateInfo = async (req,res)=>{
     const {name,email,password} = req.body;
 
     const user_info =  await userDetails.findById(user_id);
+
+    if(!user_info){
+        console.log("User not found!!");
+        res.status(200).json({message:"User not found"});
+    }
 
     if(name){
         user_info.name = name;
@@ -110,6 +126,11 @@ export const deleteUser = async(req,res)=>{
     const user_id = req.user;
 
     const deleted_user = await userDetails.findByIdAndDelete(user_id);
+
+    if(!deleted_user){
+        console.log("User not found");
+        res.status(200).json({message:"User not found"});
+    }
 
     console.log("user deleted");
 
