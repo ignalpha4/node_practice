@@ -36,12 +36,12 @@ export const addItem = async(req,res)=>{
         await foundCart.save();
     
         res.status(200).json({message:"item added"})
+        console.log("item added")
 
         
     } catch (error) {
         console.log(error);
     }
 
-   
 
 }

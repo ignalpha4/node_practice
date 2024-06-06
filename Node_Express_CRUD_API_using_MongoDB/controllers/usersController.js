@@ -49,24 +49,8 @@ export  const updateUserInfo= async(req,res)=>{
 
     let {userid}=req.params;  //gets id which is passed in the req parameters
 
-    let {username,password,gender}=req.body; //gives the username pass or gender whatever is present
 
+    let usertoupdate = await user.findByIdAndUpdate(userid,req.body);
     
-    let usertoupdate = await user.findById(userid)
-    
-    if(username){
-        usertoupdate.username=username;
-    }
-
-    if(password){
-        usertoupdate.password=password;
-    }
-    
-    if(gender){
-        usertoupdate.gender=gender;
-    }
-
-    await usertoupdate.save();
-
     res.send(`user with the id ${usertoupdate.id} is updated`);
 }
