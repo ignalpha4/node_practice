@@ -15,26 +15,76 @@ export const addProfile=async(req,res)=>{
     
         const addedProfile = await profiles.create(profile);
 
-
-        //passing userid as well as profile id to gen tokens
-        const token_obj = {
-            profileId:addedProfile._id,
-            userId:userId
-        }
-
-        const token = generateTokenProfile(token_obj);
-
         const createCart = await cart.create({profileId:addedProfile._id});
 
         console.log(`profile added for user ${userId}`);
 
-        res.status(200).json({message:"profile added",token:token});
+        res.status(200).json({message:"profile added"});
 
     } catch (error) {
         console.log(error);
     }
 }
 
+//lisiting all profiles for logged in user
+export const listProfiles=async(req,res)=>{
+
+    try {
+        
+        const userId = req.user;
+
+        const foundProfiles = await profiles.find({userId});
+
+        console.log("List of Profiles of user : \n",foundProfiles);
+
+        res.status(200).json({message:"List of Profiles of User : \n",foundProfiles});
+
+
+    } catch (error) {
+        console.log(error);
+    }
+
+
+}
+
+
+export const selectprofile =async(req,res)=>{
+
+    try {
+        
+        const userId = req.user;
+        const {profileId} = req.body;
+
+        //finding users email so to use it to gen token
+        const foundUser = await user.findById(userId);
+
+        const selectedProfile = await profiles.findById(profileId);
+
+        if(userId != selectedProfile.userId){
+            console.log("You are not authorized to access this profile");
+            res.status(400).json({message:"You are not authorized to access this profile"});
+        }
+
+        console.log("selected profile:\n",selectedProfile);
+
+
+        //passing userid,profile id,email to gen tokens
+
+        const token_obj = {
+            profileId:selectedProfile._id,
+            userId:userId,
+            email:foundUser.email
+        }
+
+        const token = generateTokenProfile(token_obj);
+
+        res.status(200).json({message:"Profile selected",token:token});
+
+    } catch (error) {
+        console.log(error);
+    }
+
+}
 
 export const editProfile=async(req,res)=>{
 

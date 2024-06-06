@@ -22,8 +22,8 @@ export const auth_profile=(req,res,next)=>{
    
     console.log("This is decoded part ",decoded);
     req.profile = decoded.profileId;
-    
-    req.user_id =decoded.userId;
+    req.userId =decoded.userId;
+    req.email = decoded.email;
 
     next();
 

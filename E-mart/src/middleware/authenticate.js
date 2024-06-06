@@ -5,8 +5,6 @@ export const authenticate=(req,res,next)=>{
     try {
         const token = req.headers.authorization?.split(' ')[1];
 
-    console.log(token);
-
     if(!token){
         res.status(404).json({message:"token not found"});
     }
@@ -21,13 +19,10 @@ export const authenticate=(req,res,next)=>{
 
     //creating the key value in  req so that it can be used to identify the user
     req.user = decoded;
-    console.log("inside user auth");
-    console.log("here user is : ",req.user)
 
     //now req.user will have the userId which can be used to identify the user for further operations
 
     next();
-
 
     } catch (error) {
         console.log(error);

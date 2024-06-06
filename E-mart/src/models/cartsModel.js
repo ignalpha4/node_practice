@@ -3,6 +3,7 @@ import mongoose, { mongo } from "mongoose";
 
 
 const cartSchema = mongoose.Schema({
+    
     profileId:{
         type:String
     },
@@ -15,5 +16,4 @@ const cartSchema = mongoose.Schema({
 })
 
 const cart = mongoose.model("cart",cartSchema);
-
 export default cart;
