@@ -3,7 +3,7 @@ import userModel from "../models/userModel";
 import cartModel from "../models/cartModel";
 import { IItems } from "../interfaces/cartModelInteface";
 
-export const addItem =async (req:any,res:Response)=>{
+export const addItem =async (req:any,res:Response) : Promise<void>=>{
 
     try {
         const profileId = req.profileId;
@@ -17,11 +17,13 @@ export const addItem =async (req:any,res:Response)=>{
             throw new Error;
         }
 
+
+
         const foundCart : any= await cartModel.findOne({profileId});
 
         console.log("Found cart ",foundCart);
         //now adding items to cart
-        const itemIndex= foundCart.items.findIndex((item : IItems) => item.productId === productId);
+        const itemIndex :number = foundCart.items.findIndex((item : IItems) => item.productId === productId);
     
         if (itemIndex > -1) { 
 

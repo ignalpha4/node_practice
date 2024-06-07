@@ -1,5 +1,5 @@
 
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const SecretKey = "shubham";
 
@@ -9,6 +9,6 @@ export const createProfileToken = (profileId:any,email:any)=>{
 }
 
 export const validateProfileToken = (token:any)=>{
-    const decoded = jwt.verify(token,SecretKey);
+    const decoded : JwtPayload | string = jwt.verify(token,SecretKey);
     return decoded;
 }

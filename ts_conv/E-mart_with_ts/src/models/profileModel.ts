@@ -4,7 +4,7 @@ import { IProfileModel } from "../interfaces/profileModelInterface";
 
 const profileSchema = new mongoose.Schema<IProfileModel>({
     userId:{
-        type:String,
+        type: mongoose.Schema.Types.ObjectId,
         required:true,
         ref:"user"
     },

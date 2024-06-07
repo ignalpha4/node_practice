@@ -4,7 +4,7 @@ import { ICartModel } from "../interfaces/cartModelInteface";
 const cartSchema = new mongoose.Schema<ICartModel>({
 
     profileId:{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
         required:true
     },
     items:[

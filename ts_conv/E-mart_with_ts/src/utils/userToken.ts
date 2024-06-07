@@ -1,14 +1,15 @@
 
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const SecretKey = "shubham";
 
-export const createUserToken = (userId:any,email:any)=>{
+export const createUserToken = (userId:any,email:any) :string =>{
     const token = jwt.sign({userId:userId,email:email},SecretKey);
     return token;
 }
 
-export const validateUserToken = (token:any)=>{
-    const decoded = jwt.verify(token,SecretKey);
+export const validateUserToken = (token:any) :any=>{
+    const decoded :JwtPayload | string= jwt.verify(token,SecretKey);
     return decoded;
 }
+

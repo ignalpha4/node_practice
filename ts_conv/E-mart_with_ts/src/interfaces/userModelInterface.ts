@@ -1,12 +1,11 @@
+import { Types } from "mongoose";
 
 
 export interface IUserModel {
     name:string,
     email:string,
     password:string,
-    createdAt?:string,
-    updateAt?:string,
-    _id?:string,
+    _id?:Types.ObjectId,
 }
 
 
