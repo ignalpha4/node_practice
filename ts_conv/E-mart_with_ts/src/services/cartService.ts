@@ -4,7 +4,9 @@ import cartModel from "../models/cartModel";
 import { IItems } from "../interfaces/cartModelInteface";
 
 
-export const addItemService =async(profileId:ObjectId,email:String,productId:any,productName:String,userEmail:String,res:Response):Promise<void>=>{
+export class cartServiceClass{
+
+  addItemService =async(profileId:ObjectId,email:String,productId:any,productName:String,userEmail:String,res:Response):Promise<void>=>{
 
     if(userEmail!=email){
         res.status(401).json({message:"Unauthorized access"});
@@ -31,3 +33,6 @@ export const addItemService =async(profileId:ObjectId,email:String,productId:any
     await foundCart.save();
 
 }
+}
+
+
