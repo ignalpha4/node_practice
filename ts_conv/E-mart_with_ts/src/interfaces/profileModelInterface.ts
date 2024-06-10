@@ -1,7 +1,8 @@
-import { Types } from "mongoose";
+import {ObjectId, Types } from "mongoose";
 
 
 export interface IProfileModel {
-    userId:Types.ObjectId,
+    userId:ObjectId,
     profileName:string,
+    _id?:ObjectId
 }

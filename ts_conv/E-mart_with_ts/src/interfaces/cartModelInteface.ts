@@ -1,7 +1,7 @@
-import { Types } from "mongoose"
+import { ObjectId, Types } from "mongoose"
 
 export interface ICartModel{
-    profileId:Types.ObjectId,
+    profileId:ObjectId,
     items:IItems[]
 }
 

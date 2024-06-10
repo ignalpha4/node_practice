@@ -3,8 +3,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 const SecretKey = "shubham";
 
-export const createUserToken = (userId:any,email:any) :string =>{
-    const token = jwt.sign({userId:userId,email:email},SecretKey);
+export const createUserToken = (userId:any,email:any) :String =>{
+    const token : String= jwt.sign({userId:userId,email:email},SecretKey);
     return token;
 }
 
