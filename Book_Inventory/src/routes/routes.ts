@@ -1,5 +1,5 @@
 import express from "express";
-import { login, signUp } from "../controllers/userController";
+import { adminLogin, adminSignUp } from "../controllers/adminController";
 import { authAdmin, authUser } from "../middleware/authenticateUsers";
 import { addBook, deleteBook, listBooks, updateBook } from "../controllers/booksController";
 import { addAuthor, deleteAuthor, listAuthors, updateAuthor } from "../controllers/authorController";
@@ -9,11 +9,12 @@ import { addCategory, deleteCategory, listCategory, updateCategory } from "../co
 const router = express.Router();
 
 
-//login and signup
+//login and signup for admin
+router.post("/signup",adminSignUp);
+router.post("/login",adminLogin);
 
-router.post("/signup",signUp);
-
-router.post("/login",login);
+//login and signup for author
+router.post("/")
 
 //CRUD Books
 router.post("/addbook",authUser,addBook);
@@ -32,6 +33,5 @@ router.post("/addcategory",authUser,authAdmin,addCategory);
 router.get("/listcategory",authUser,authAdmin,listCategory);
 router.patch("/updatecategory",authUser,authAdmin,updateCategory);
 router.delete("/deletecategory",authUser,authAdmin,deleteCategory);
-
 
 export {router as allRoutes};

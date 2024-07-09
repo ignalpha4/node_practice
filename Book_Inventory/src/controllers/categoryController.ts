@@ -42,7 +42,6 @@ export const listCategory = async(req:any,res:any)=>{
 export const deleteCategory = async(req:any,res:any)=>{
     
     try{
-        
         const {id} = req.body;
 
         const deletedCat = await categoryModel.findByIdAndDelete(id);

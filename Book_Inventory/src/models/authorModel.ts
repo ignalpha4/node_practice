@@ -13,7 +13,6 @@ const authorSchema = new mongoose.Schema<IAuthorSchema>({
     },
     nationality:{
         type:String,
-    
     }
 }) 
 

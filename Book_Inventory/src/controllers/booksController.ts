@@ -1,22 +1,20 @@
-import authorModel from "../models/authorModel";
 import bookModel from "../models/bookModel";
 
 export const addBook =async(req:any,res:any)=>{
 
     try {
-        const book =req.body;
+        const book = req.body;
 
-        if(req.role =="author"){
-            book.author = req.name;
+        if(req.role == "author"){
+            book.author = req.userId;
         }
-   
-        const addedBook =await bookModel.create(book);
+        const addedBook = await bookModel.create(book);
      
         if(!addedBook){
           console.log("provide the necessary details to add ");
           res.status(400).json({message:"provide the necessary details to add"})
         }
-        console.log("Added Book",book);
+        console.log("Added Book",addedBook);
         res.status(200).json({message:"Book added",book:addedBook});
 
     } catch (error) {
@@ -25,12 +23,12 @@ export const addBook =async(req:any,res:any)=>{
 }
 
 export const listBooks = async(req:any,res:any)=>{
-    try {
 
+    try {
         let foundBooks;
         if(req.role=="author"){
-            const authorName = req.name;
-            foundBooks= await bookModel.find({author:authorName});
+            const authorId = req.userId;
+            foundBooks= await bookModel.find({author:authorId});
         }else{
             foundBooks= await bookModel.find();
         }
@@ -41,7 +39,6 @@ export const listBooks = async(req:any,res:any)=>{
         }
 
         console.log("Available Books \n",foundBooks);
-
         res.status(200).json({message:"Available Books \n",books:foundBooks});
 
     } catch (error) {
@@ -53,7 +50,6 @@ export const listBooks = async(req:any,res:any)=>{
 export const deleteBook = async(req:any,res:any)=>{
     
     try{
-        
         const {id} = req.body;
 
         let deletedBook;
@@ -61,8 +57,7 @@ export const deleteBook = async(req:any,res:any)=>{
         const foundbook:any = await bookModel.findById(id);
 
         if(req.role=="author"){
-
-            if(req.name== foundbook.author){
+            if(req.userId== foundbook.author){
                 deletedBook = await bookModel.findByIdAndDelete(id);
 
                 console.log("Book deleted",deletedBook);
@@ -72,8 +67,8 @@ export const deleteBook = async(req:any,res:any)=>{
                 console.log("Author not authorized to delete the book");
                 res.status(400).json({message:"Author not authorized to delete the book"})
             }
-         
         }
+
         else{
 
             deletedBook = await bookModel.findByIdAndDelete(id);
@@ -106,9 +101,9 @@ export const updateBook=async(req:any,res:any)=>{
     
         if(req.role=="author"){
     
-            if(req.name== foundbook.author){
+            if(req.userId== foundbook.author){
     
-                req.body.author = req.name;
+                req.body.author = req.userId;
     
                 updatedBook = await bookModel.findByIdAndUpdate(id,req.body);
     
@@ -120,9 +115,7 @@ export const updateBook=async(req:any,res:any)=>{
                 res.status(400).json({message:"Author not authorized to update the book"})
             }
     
-        }else{
-    
-            
+        }else{  
         updatedBook = await bookModel.findByIdAndUpdate(id,req.body);
     
         

@@ -5,8 +5,6 @@ import {auth_controller} from "../controllers/auth_controller.js";
 
 const router=express.Router();
 
-
 router.post("/auth",middle,auth_controller);
-
 
 export {router as indexRoute};

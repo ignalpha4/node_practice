@@ -18,7 +18,6 @@ export const authUser=(req:any,res:any,next:NextFunction)=>{
 
     req.userId = decoded.id;
     req.role =decoded.role;
-    req.name = decoded.name;
 
     next();
 }

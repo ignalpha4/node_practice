@@ -3,17 +3,34 @@ import authorModel from "../models/authorModel";
 export const addAuthor =async(req:any,res:any)=>{
 
     try {
+        const author = req.body;
 
-        const author =req.body;
+        let addedAuthor;
 
-        const addedAuthor =await authorModel.create(author);
+        if(req.role=="author"){
+
+            const findauthor= await authorModel.findOne({name:req.name});
+
+            if(findauthor){
+                console.log("Author already exists");
+                res.status(400).json({message:"Author already exists"})
+                throw new Error;
+            }else{
+                author.name= req.name;
+                addedAuthor = await authorModel.create(author);
+            }   
+
+        }else{
+            addedAuthor =await authorModel.create(author);
      
-        if(!addedAuthor){
-          console.log("provide the necessary details to add author ");
-          res.status(400).json({message:"provide the necessary details to add author"})
+            if(!addedAuthor){
+              console.log("provide the necessary details to add author ");
+              res.status(400).json({message:"provide the necessary details to add author"})
+            }
+            console.log("Added author",author);
+            res.status(200).json({message:"Author added",author:addedAuthor});
         }
-        console.log("Added author",author);
-        res.status(200).json({message:"Author added",author:addedAuthor});
+
 
     } catch (error) {
         console.log(error);
@@ -26,7 +43,7 @@ export const listAuthors = async(req:any,res:any)=>{
         const foundAuthors= await authorModel.find();
 
         if(!foundAuthors){
-            console.log("No authors found ");
+            console.log("No authors found");
             res.status(400).json({message:"No authors found"})
         }
 
@@ -43,7 +60,6 @@ export const listAuthors = async(req:any,res:any)=>{
 export const deleteAuthor = async(req:any,res:any)=>{
     
     try{
-        
         const {id} = req.body;
 
         const deletedAuthor = await authorModel.findByIdAndDelete(id);

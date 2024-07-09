@@ -14,7 +14,6 @@ connect_db()
 //routes
 app.use("/user",allRoutes);
 
-
 app.listen(PORT,()=>{
     console.log(`Server Running On PORT ${PORT} !`);
 })

@@ -1,5 +1,5 @@
 //title, author, category, ISBN, description, and price
-import mongoose, { mongo } from "mongoose"
+import mongoose, { mongo, Schema } from "mongoose"
 import { IBookModel } from "../interfaces/bookModelInterface";
 
 const bookSchema = new mongoose.Schema<IBookModel>({
@@ -8,7 +8,7 @@ const bookSchema = new mongoose.Schema<IBookModel>({
         required:true
     },
     author:{
-        type:String,
+        type:Schema.Types.ObjectId,ref:'author',
         required:true
     },
     category:{
@@ -26,7 +26,7 @@ const bookSchema = new mongoose.Schema<IBookModel>({
     price:{
         type:Number,
         required:true
-    },
+    }
 }) 
 
 const bookModel = mongoose.model<IBookModel>('book',bookSchema);

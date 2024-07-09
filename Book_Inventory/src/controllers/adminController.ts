@@ -2,12 +2,11 @@
 import { Request,Response } from "express"
 import userModel from "../models/userModel"
 import bcrypt from "bcrypt"
-import { IUserModel } from "../interfaces/userModelInterface";
 import { generateUserToken } from "../utils/userToken";
 
 
 //user signup
-export const signUp =async(req:any,res:Response)=>{
+export const adminSignUp =async(req:any,res:Response)=>{
 
     try {
         
@@ -31,9 +30,8 @@ export const signUp =async(req:any,res:Response)=>{
     }
 }
 
-
 //user login
-export const login=async(req:any,res:Response)=>{
+export const adminLogin=async(req:any,res:Response)=>{
 
     try {
 

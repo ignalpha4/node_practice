@@ -4,9 +4,7 @@ import { generateToken } from "../utils/jwt.js";
 
 
 //login and signup
-
 export const signupHandler=async(req,res)=>{
-
     try {
         const {name, email,password} = req.body;
 
@@ -17,8 +15,6 @@ export const signupHandler=async(req,res)=>{
         };
 
         const new_user = await userDetails.create(user_data);
-
-
         res.status(200).json({message:"Signup done"});
         
     } catch (error) {
@@ -39,21 +35,16 @@ export const loginHandler=async(req,res)=>{
 
         if(!user_info){
             res.status(404).json({message:"User not found"});
-
         }
 
         const match_pass = await bcrypt.compare(password,user_info.password);
 
         if(match_pass){
-
-            const token = generateToken(user_info._id);
-                    
+            const token = generateToken(user_info._id);    
             res.status(200).json({message:"Login successfull!!",token})
         }else{
             res.status(401).json({message:"Login Failed!!"})
         }
-
-
         await user_info.save();
 
     }catch(error){
@@ -62,13 +53,10 @@ export const loginHandler=async(req,res)=>{
 }
 
 //user operations
-
 export const getInfo=async(req,res)=>{
-
     try {
-
-        const {user_id} = req.user;
-
+        const user_id = req.user;
+        
         const  user= await userDetails.findById(user_id);
       
         if(!user){
@@ -78,62 +66,39 @@ export const getInfo=async(req,res)=>{
     
         res.status(200).json({user});
 
-    } catch (error) {
-        
+    }catch (error) {
         console.log(error);
     }
-
-
 }
 
 export const updateInfo = async (req,res)=>{
 
-    const user_id = req.user;
+    try {
+        const user_id = req.user;
+        const user_info =  await userDetails.findByIdAndUpdate(user_id,req.body);
     
-    const {name,email,password} = req.body;
-
-    const user_info =  await userDetails.findById(user_id);
-
-    if(!user_info){
-        console.log("User not found!!");
-        res.status(200).json({message:"User not found"});
+        if(!user_info){
+            res.status(404).json({message:'User not found'});
+        }
+        res.status(200).json({message:"Info updated successfully"});
+        
+    } catch (error) {
+        console.log(error);    
     }
-
-    if(name){
-        user_info.name = name;
-    }
-
-    if(email){
-        user_info.email = email;
-    }
-
-    if(password){
-
-        const hash_pass = bcrypt.hash(password,10);
-
-        user_info.password = hash_pass;
-    }
-
-    await user_info.save();
-
-    res.status(200).json({message:"Info updated successfully"});
 
 }
 
-
 export const deleteUser = async(req,res)=>{
-
-    const user_id = req.user;
-
-    const deleted_user = await userDetails.findByIdAndDelete(user_id);
-
-    if(!deleted_user){
-        console.log("User not found");
-        res.status(200).json({message:"User not found"});
+    try {
+        const user_id = req.user;
+        const deleted_user = await userDetails.findByIdAndDelete(user_id);
+        if(!deleted_user){
+            console.log("User not found");
+            res.status(200).json({message:"User not found"});
+        }
+        console.log("user deleted");
+        res.status(200).json({message:"User deleted Sucessfully"});
+    } catch (error) {
+        console.log(error);
     }
-
-    console.log("user deleted");
-
-    res.status(200).json({message:"User deleted Sucessfully"});
-
 }

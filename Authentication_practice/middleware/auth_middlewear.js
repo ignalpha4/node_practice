@@ -11,6 +11,6 @@ export const  middle = (req,res,next)=>{
         next();
     }
     else{
-        return res.status(400).send(" incorrect username or pass");
+        return res.status(400).send("incorrect username or pass");
     }
 }
