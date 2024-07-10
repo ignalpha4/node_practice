@@ -53,43 +53,53 @@ export class cartControllerClass {
   viewCart = async (req: any, res: Response): Promise<void> => { 
     
     try {
-
       const cartDetails = await cartModel.aggregate([
         { $match: { profileId: new ObjectId(req.profileId) } },
-        { $unwind: "$items" },
+        {
+          $unwind: {
+            path: "$items"
+          }
+        },
         {
           $lookup: {
             from: "products",
             localField: "items.productId",
             foreignField: "_id",
-            as: "productDetails"
+            as: "Data"
           }
         },
-        { $unwind: "$productDetails"},
         {
-          $project: {
-            _id: 0,
-            productName: "$productDetails.productName",
-            productCategory: "$productDetails.productCategory",
-            quantity: "$items.quantity",
-            price: "$productDetails.price", 
-            totalItemCost: { $multiply: ["$items.quantity", "$productDetails.price"] }
+          $unwind: {
+            path: "$Data"
+          }
+        },
+        {
+          $addFields: {
+            totalItemCost: { $multiply: ["$items.quantity", "$Data.price"] }
           }
         },
         {
           $group: {
-            _id: null,
-            cartItems: { $push: "$$ROOT" },
+            _id: "$profileId",
+            items: {
+              $push: {
+                productName: "$Data.productName",
+                productCategory: "$Data.productCategory",
+                quantity: "$items.quantity",
+                price: "$Data.price",
+                totalItemCost: "$totalItemCost"
+              }
+            },
             totalCost: { $sum: "$totalItemCost" }
           }
         },
-        {
-          $project: {
-            _id: 0,
-            cartItems: 1,
-            totalCost: 1
-          }
-        }
+        // {
+        //   $project: {
+        //     _id: 0,
+        //     items: 1,
+        //     totalCost: 1
+        //   }
+        // }
       ]);
 
       if (cartDetails.length > 0) {

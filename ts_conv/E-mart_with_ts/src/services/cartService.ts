@@ -67,6 +67,7 @@ export class cartServiceClass{
       await foundCart.save();
       res.status(200).json({ message: "Item removed" });
       console.log("Item removed from cart");
+      
     } else {
       res.status(404).json({ message: "Item not found in cart" });
       console.log("Item not found in cart");
