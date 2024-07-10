@@ -47,8 +47,7 @@ export class userServiceClass{
     
     }
     
-    
-    
+
     updatedUserService = async (userId :ObjectId,req:Request) : Promise<IUserModel |null>=>{
     
         console.log("updating the user with id: ",userId);

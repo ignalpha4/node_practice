@@ -19,6 +19,7 @@ const cartControllerObj = new cartControllerClass();
 const router =  express.Router();
 
 //user account operations
+
 router.post("/signup",userControllerObj.userSignUp);
 router.post("/login",userControllerObj.userLogin);
 router.patch("/update",authUserObj.authUser,userControllerObj.updateUser);
@@ -36,5 +37,9 @@ router.post("/selectprofile",authUserObj.authUser,profileControllerObj.selectPro
 //cart operations
 
 router.post("/additem",authProfileObj.authProfile,cartControllerObj.addItem);
+router.delete('/removeitem',authProfileObj.authProfile,cartControllerObj.removeItem);
+router.get('/viewCart/:profileId',authProfileObj.authProfile,cartControllerObj.viewCart)
+
+
 
 export {router as userRoutes}  

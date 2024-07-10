@@ -4,11 +4,9 @@ import { userTokenClass } from "../utils/userToken";
 import { Request,Response,NextFunction } from "express";
 
 //obj of userTokenClass
-
 const userTokenObj = new userTokenClass();
 
 export class userAuthentication{
-
 
       authUser = (req:any,res:Response,next:NextFunction) =>{
         try {
