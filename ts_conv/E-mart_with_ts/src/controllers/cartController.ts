@@ -2,7 +2,6 @@ import { Response } from "express";
 import { cartServiceClass } from "../services/cartService";
 import cartModel from "../models/cartModel";
 import mongoose from "mongoose";
-const ObjectId = mongoose.Types.ObjectId;
 
 export const cartServiceObj = new cartServiceClass();
 
@@ -54,7 +53,7 @@ export class cartControllerClass {
     
     try {
       const cartDetails = await cartModel.aggregate([
-        { $match: { profileId: new ObjectId(req.profileId) } },
+        { $match: { profileId: new mongoose.Types.ObjectId(req.profileId) } },
         {
           $unwind: {
             path: "$items"
@@ -109,7 +108,7 @@ export class cartControllerClass {
       }
       
     } catch (error) {
-      console.error("Error viewing cart details:", error);
+      console.error("Error in cart details:", error);
       res.status(500).json({ message: "An error occurred while fetching cart details" });
     }
   }

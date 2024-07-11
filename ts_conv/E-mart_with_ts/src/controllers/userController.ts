@@ -5,7 +5,6 @@ import { userServiceClass } from "../services/userService";
 
 const userServiceObj = new userServiceClass();
 
-
 export class userControllerClass{
     //sign up
     userSignUp  = async(req:Request,res:Response) :Promise<void>=>{

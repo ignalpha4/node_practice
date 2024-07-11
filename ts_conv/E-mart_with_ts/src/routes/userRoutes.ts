@@ -4,6 +4,7 @@ import { userAuthentication } from "../middleware/authUser";
 import { profileControllerClass } from "../controllers/profileController";
 import { profileAuthentication } from "../middleware/authProfile";
 import { cartControllerClass } from "../controllers/cartController";
+import { ProductsController } from "../controllers/productsController";
 
 const authUserObj = new userAuthentication();
 
@@ -14,6 +15,8 @@ const userControllerObj = new userControllerClass();
 const profileControllerObj  =  new profileControllerClass();
 
 const cartControllerObj = new cartControllerClass();
+
+const ProductsControllerObj = new ProductsController();
 
 
 const router =  express.Router();
@@ -38,7 +41,11 @@ router.post("/selectprofile",authUserObj.authUser,profileControllerObj.selectPro
 
 router.post("/additem",authProfileObj.authProfile,cartControllerObj.addItem);
 router.delete('/removeitem',authProfileObj.authProfile,cartControllerObj.removeItem);
-router.get('/viewCart/:profileId',authProfileObj.authProfile,cartControllerObj.viewCart)
+router.get('/viewCart/:profileId',authProfileObj.authProfile,cartControllerObj.viewCart);
+
+//view products
+
+router.get('/viewproducts',authProfileObj.authProfile,ProductsControllerObj.viewProducts);
 
 
 
