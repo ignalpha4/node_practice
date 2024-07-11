@@ -1,136 +1,131 @@
-import bookModel from "../models/bookModel";
+import { Request, Response } from 'express';
+import bookModel from '../models/bookModel';
 
-export const addBook =async(req:any,res:any)=>{
-
+// Add a book
+export const addBook = async (req: any, res: Response) => {
     try {
         const book = req.body;
 
-        if(req.role == "author"){
-            book.author = req.userId;
+       
+        if (req.user.role === 'author') {
+            book.author = req.user._id;
         }
+
         const addedBook = await bookModel.create(book);
-     
-        if(!addedBook){
-          console.log("provide the necessary details to add ");
-          res.status(400).json({message:"provide the necessary details to add"})
+
+        if (!addedBook) {
+            console.log("Provide the necessary details to add a book");
+            return res.status(400).json({ message: "Provide the necessary details to add a book" });
         }
-        console.log("Added Book",addedBook);
-        res.status(200).json({message:"Book added",book:addedBook});
+
+        console.log("Added Book", addedBook);
+        res.status(200).json({ message: "Book added", book: addedBook });
 
     } catch (error) {
-        console.log(error);
+        console.error('Error adding book:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
-export const listBooks = async(req:any,res:any)=>{
-
+// books list
+export const listBooks = async (req: any, res: Response) => {
     try {
         let foundBooks;
-        if(req.role=="author"){
-            const authorId = req.userId;
-            foundBooks= await bookModel.find({author:authorId});
-        }else{
-            foundBooks= await bookModel.find();
+
+
+        if (req.user.role === 'author') {
+            const authorId = req.user._id;
+            foundBooks = await bookModel.find({ author: authorId });
+        } else {
+            foundBooks = await bookModel.find();
         }
 
-        if(!foundBooks){
-            console.log("No books found ");
-            res.status(400).json({message:"No books found"})
+        if (!foundBooks || foundBooks.length === 0) {
+            console.log("No books found");
+            return res.status(404).json({ message: "No books found" });
         }
 
-        console.log("Available Books \n",foundBooks);
-        res.status(200).json({message:"Available Books \n",books:foundBooks});
+        console.log("Available Books:\n", foundBooks);
+        res.status(200).json({ message: "Available Books", books: foundBooks });
 
     } catch (error) {
-        console.log(error);        
+        console.error('Error listing books:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
 
-export const deleteBook = async(req:any,res:any)=>{
-    
-    try{
-        const {id} = req.body;
+export const deleteBook = async (req: any, res: Response) => {
+    try {
+        const { id } = req.body;
 
         let deletedBook;
 
-        const foundbook:any = await bookModel.findById(id);
+        const foundBook = await bookModel.findById(id);
 
-        if(req.role=="author"){
-            if(req.userId== foundbook.author){
-                deletedBook = await bookModel.findByIdAndDelete(id);
-
-                console.log("Book deleted",deletedBook);
-                res.status(400).json({message:"Book Deleted",book:deletedBook})
-
-            }else{
-                console.log("Author not authorized to delete the book");
-                res.status(400).json({message:"Author not authorized to delete the book"})
-            }
-        }
-
-        else{
-
-            deletedBook = await bookModel.findByIdAndDelete(id);
-
-            if(!deletedBook){
-                console.log("No books found to delete");
-                res.status(400).json({message:"No books found to delete"})
-            }
-    
-            console.log("Book Deleted \n",deletedBook);
-    
-            res.status(200).json({message:"Deleted Book \n",book:deletedBook});
-    
-        }
-    } catch (error) {
-        console.log(error);
         
+        if (req.user.role === 'author') {
+            if (req.user._id === foundBook?.author.toString()) {
+                deletedBook = await bookModel.findByIdAndDelete(id);
+                console.log("Book deleted", deletedBook);
+                return res.status(200).json({ message: "Book deleted", book: deletedBook });
+            } else {
+                console.log("Author not authorized to delete the book");
+                return res.status(403).json({ message: "Author not authorized to delete the book" });
+            }
+        }
+
+     
+        deletedBook = await bookModel.findByIdAndDelete(id);
+
+        if (!deletedBook) {
+            console.log("No book found to delete");
+            return res.status(404).json({ message: "No book found to delete" });
+        }
+
+        console.log("Book Deleted:\n", deletedBook);
+        res.status(200).json({ message: "Book deleted", book: deletedBook });
+
+    } catch (error) {
+        console.error('Error deleting book:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
-export const updateBook=async(req:any,res:any)=>{
-
+// Update a book
+export const updateBook = async (req: any, res: Response) => {
     try {
+        const { id } = req.body;
 
         let updatedBook;
 
-        const {id} = req.body;
-    
-        const foundbook :any= await bookModel.findById(id);
-    
-        if(req.role=="author"){
-    
-            if(req.userId== foundbook.author){
-    
-                req.body.author = req.userId;
-    
-                updatedBook = await bookModel.findByIdAndUpdate(id,req.body);
-    
-                console.log("Book Updated",updatedBook);
-                res.status(400).json({message:"Book Updated",book:updatedBook})
-    
-            }else{
+        const foundBook = await bookModel.findById(id);
+
+        if (req.user.role === 'author') {
+            if (req.user._id === foundBook?.author.toString()) {
+                req.body.author = req.user._id;
+                updatedBook = await bookModel.findByIdAndUpdate(id, req.body, { new: true });
+                console.log("Book updated", updatedBook);
+                return res.status(200).json({ message: "Book updated", book: updatedBook });
+            } else {
                 console.log("Author not authorized to update the book");
-                res.status(400).json({message:"Author not authorized to update the book"})
+                return res.status(403).json({ message: "Author not authorized to update the book" });
             }
-    
-        }else{  
-        updatedBook = await bookModel.findByIdAndUpdate(id,req.body);
-    
-        
-        if(!updatedBook){
-            console.log("No books found to update");
-            res.status(400).json({message:"No books found to update"})
         }
-    
-        console.log("Book updated \n",updatedBook);
-    
-        res.status(200).json({message:" Book updated \n",book:updatedBook});
-    
+
+
+        updatedBook = await bookModel.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedBook) {
+            console.log("No book found to update");
+            return res.status(404).json({ message: "No book found to update" });
         }
-        
+
+        console.log("Book updated:\n", updatedBook);
+        res.status(200).json({ message: "Book updated", book: updatedBook });
+
     } catch (error) {
-        console.log(error);
+        console.error('Error updating book:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};

@@ -1,21 +1,19 @@
 
-import { Request,Response } from "express"
+import {Response} from "express"
 import userModel from "../models/userModel"
 import bcrypt from "bcrypt"
 import { generateUserToken } from "../utils/userToken";
-
+import authorModel from "../models/authorModel";
 
 //user signup
-export const adminSignUp =async(req:any,res:Response)=>{
-
+export const signup =async(req:any,res:Response)=>{
     try {
         
-        const {name,email,password,role} = req.body;
+        const {email,password,role} = req.body;
 
         const hashedPassword  = await bcrypt.hash(password,10);
     
-    
-        const createdUser = await userModel.create({name,email,password:hashedPassword,role});
+        const createdUser = await userModel.create({email,password:hashedPassword,role});
     
         if(!createdUser){
             console.log("error creating the user");
@@ -30,9 +28,50 @@ export const adminSignUp =async(req:any,res:Response)=>{
     }
 }
 
-//user login
-export const adminLogin=async(req:any,res:Response)=>{
 
+export const authorSignup = async(req:any,res:Response)=>{
+
+    try {
+
+        let role="author";
+
+        const {email,password,name,biography,nationality} = req.body;
+
+
+        const hashedPassword  = await bcrypt.hash(password,10);
+    
+        const createdUser = await userModel.create({email,password:hashedPassword,role});
+
+        const createdAuthor = await authorModel.create({nationality,biography,name,userId:createdUser._id});
+
+
+        if(!createdUser){
+            console.log("error creating the user");
+            req.status(401).json({message:"User creation Error"});
+            throw new Error;
+        }
+
+        if(!createdAuthor){
+            console.log("unable to create author");
+
+            if(createdUser){
+                await userModel.findByIdAndDelete(createdUser._id);
+            }
+
+            req.status(401).json({message:"author creation error"});
+        }
+
+        console.log("Author SignUp successfull !");
+        res.status(200).json({message:"Author SignUp successfull !"});
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+//user login
+export const login = async(req:any,res:Response)=>{
     try {
 
         const {email,password} = req.body;
@@ -40,8 +79,10 @@ export const adminLogin=async(req:any,res:Response)=>{
         const foundUser= await userModel.findOne({email});
 
         if(!foundUser){
+
             console.log("No user found with this email");
             res.status(404).json({message:"user not found with this email!"});
+            
         }
 
         const foundUserPass:any= foundUser?.password;
@@ -54,7 +95,7 @@ export const adminLogin=async(req:any,res:Response)=>{
         }
 
         const payload={
-            name:foundUser?.name,
+            email:foundUser?.email,
             id:foundUser?._id,
             role:foundUser?.role
         }
@@ -67,5 +108,4 @@ export const adminLogin=async(req:any,res:Response)=>{
     } catch (error) {
         console.log(error);
     }
-
 }

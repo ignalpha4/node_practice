@@ -1,99 +1,117 @@
 import authorModel from "../models/authorModel";
+import bcrypt from "bcrypt"
+import userModel from "../models/userModel";
 
-export const addAuthor =async(req:any,res:any)=>{
+// Add author
 
+export const addAuthor = async (req: any, res: any) => {
     try {
-        const author = req.body;
 
-        let addedAuthor;
+        const { name, email, password, biography, nationality } = req.body;
 
-        if(req.role=="author"){
+        // Create user in userModel
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const createdUser = await userModel.create({ name, email, password: hashedPassword, role: 'author' });
 
-            const findauthor= await authorModel.findOne({name:req.name});
-
-            if(findauthor){
-                console.log("Author already exists");
-                res.status(400).json({message:"Author already exists"})
-                throw new Error;
-            }else{
-                author.name= req.name;
-                addedAuthor = await authorModel.create(author);
-            }   
-
-        }else{
-            addedAuthor =await authorModel.create(author);
-     
-            if(!addedAuthor){
-              console.log("provide the necessary details to add author ");
-              res.status(400).json({message:"provide the necessary details to add author"})
-            }
-            console.log("Added author",author);
-            res.status(200).json({message:"Author added",author:addedAuthor});
+        if (!createdUser) {
+            console.log("Error creating the user");
+            return res.status(400).json({ message: "Error creating the user" });
         }
 
+        // Create author in authorModel
+        const author = await authorModel.create({ userId: createdUser._id, name, biography, nationality });
 
+        if (!author) {
+            console.log("Error creating the author");
+            // If author creation fails, delete the user created earlier
+            await userModel.findByIdAndDelete(createdUser._id);
+            return res.status(400).json({ message: "Error creating the author" });
+        }
+
+        console.log("Author and User created successfully");
+        res.status(200).json({ message: "Author and User created successfully", author, user: createdUser });
     } catch (error) {
-        console.log(error);
+        console.error('Error adding author:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
 
-export const listAuthors = async(req:any,res:any)=>{
+// List authors
+export const listAuthors = async (req: any, res: any) => {
     try {
+        const foundAuthors = await authorModel.find();
 
-        const foundAuthors= await authorModel.find();
-
-        if(!foundAuthors){
+        if (!foundAuthors) {
             console.log("No authors found");
-            res.status(400).json({message:"No authors found"})
+            return res.status(404).json({ message: "No authors found" });
         }
 
-        console.log("List of Authors \n",foundAuthors);
-
-        res.status(200).json({message:"List of Authors \n",authors:foundAuthors});
-
+        console.log("List of Authors \n", foundAuthors);
+        res.status(200).json({ message: "List of Authors", authors: foundAuthors });
     } catch (error) {
-        console.log(error);        
+        console.error('Error listing authors:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
 
-
-export const deleteAuthor = async(req:any,res:any)=>{
-    
-    try{
-        const {id} = req.body;
+// Delete author
+export const deleteAuthor = async (req: any, res: any) => {
+    try {
+        const { id } = req.body;
 
         const deletedAuthor = await authorModel.findByIdAndDelete(id);
 
-        if(!deletedAuthor){
-            console.log("No Author found to delete");
-            res.status(400).json({message:"No author found to delete"})
+        let UserAuthorID = deletedAuthor?.userId;
+
+        let deletedUserInfo;
+        if(UserAuthorID){
+           deletedUserInfo =  await userModel.findByIdAndDelete(UserAuthorID);
         }
 
-        console.log("Author Deleted \n",deletedAuthor);
 
-        res.status(200).json({message:"Deleted Author \n",author:deletedAuthor});
+        if (!deletedAuthor) {
+            console.log("No author found to delete");
+            return res.status(404).json({ message: "No author found to delete" });
+        }
 
 
-    } catch (error) {
-        console.log(error);
+        console.log("Author Deleted  and assosiated user credentials as well\n", deletedAuthor,deletedUserInfo);
+        res.status(200).json({ message: "Deleted Author and user assosiated:", author: deletedAuthor ,user:deletedUserInfo});
         
+    } catch (error) {
+        console.error('Error deleting author:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
 
-export const updateAuthor=async(req:any,res:any)=>{
+// Update author +a,u
+export const updateAuthor = async (req: any, res: any) => {
+    try {
+        const { id } = req.body;
+   
+        let updatedAuthor:any;
 
-    const {id} = req.body;
-
-    const updatedAuthor = await authorModel.findByIdAndUpdate(id,req.body);
+        if(req.user.role =='author'){
+            if(req.id == id){
+                updatedAuthor= await authorModel.findByIdAndUpdate(id,req.body);
+            }else{
+                res.send("Not authorized to update the profile");
+                throw new Error;
+            }
+        }else{
+            updatedAuthor = await authorModel.findByIdAndUpdate(id, req.body);
+        }
 
     
-    if(!updatedAuthor){
-        console.log("No author found to update");
-        res.status(400).json({message:"No author found to update"})
+        if (!updatedAuthor) {
+            console.log("No author found to update");
+            return res.status(404).json({ message: "No author found to update" });
+        }
+
+        console.log("Author updated \n", updatedAuthor);
+        res.status(200).json({ message: "Author updated", author: updatedAuthor });
+    } catch (error) {
+        console.error('Error updating author:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-
-    console.log("Author updated \n",updatedAuthor);
-
-    res.status(200).json({message:" Author updated \n",author:updatedAuthor});
-
 }

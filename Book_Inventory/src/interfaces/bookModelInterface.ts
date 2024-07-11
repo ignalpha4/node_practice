@@ -4,7 +4,7 @@ export interface IBookModel{
     title:string,
 
     author:ObjectId,
-    category:string,
+    category:ObjectId,
     ISBN:string,
     description:string,
     price:number

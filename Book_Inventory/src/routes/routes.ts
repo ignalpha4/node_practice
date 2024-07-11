@@ -1,37 +1,33 @@
 import express from "express";
-import { adminLogin, adminSignUp } from "../controllers/adminController";
-import { authAdmin, authUser } from "../middleware/authenticateUsers";
 import { addBook, deleteBook, listBooks, updateBook } from "../controllers/booksController";
 import { addAuthor, deleteAuthor, listAuthors, updateAuthor } from "../controllers/authorController";
 import { addCategory, deleteCategory, listCategory, updateCategory } from "../controllers/categoryController";
-
+import { authorSignup, login, signup } from "../controllers/authenticationController";
+import { verifyToken, authorize } from "../middleware/auth";
 
 const router = express.Router();
 
+// Login and signup
+router.post("/signup", signup);
+router.post("/authorSignup",authorSignup);
+router.post("/login", login);
 
-//login and signup for admin
-router.post("/signup",adminSignUp);
-router.post("/login",adminLogin);
+// CRUD Books
+router.post("/addbook", verifyToken, authorize(['admin', 'author']), addBook);
+router.get("/listbooks", verifyToken, authorize(['admin', 'author', 'user']), listBooks);
+router.patch("/updatebook", verifyToken, authorize(['admin', 'author']), updateBook);
+router.delete("/deletebook", verifyToken, authorize(['admin','author']), deleteBook);
 
-//login and signup for author
-router.post("/")
+// CRUD Authors
+router.post("/addauthor", verifyToken, authorize(['admin']), addAuthor);
+router.get("/listauthors", verifyToken, authorize(['admin']), listAuthors);
+router.patch("/updateauthor", verifyToken, authorize(['admin', 'author']), updateAuthor);
+router.delete("/deleteauthor", verifyToken, authorize(['admin']), deleteAuthor);
 
-//CRUD Books
-router.post("/addbook",authUser,addBook);
-router.get("/listbooks",authUser,listBooks);
-router.patch("/updatebook",authUser,updateBook);
-router.delete("/deletebook",authUser,deleteBook);
+// CRUD Categories
+router.post("/addcategory", verifyToken, authorize(['admin']), addCategory);
+router.get("/listcategory", verifyToken, authorize(['admin', 'user']), listCategory);
+router.patch("/updatecategory", verifyToken, authorize(['admin']), updateCategory);
+router.delete("/deletecategory", verifyToken, authorize(['admin']), deleteCategory);
 
-//CRUD authors
-router.post("/addauthor",authUser,authAdmin,addAuthor);
-router.get("/listauthors",authUser,authAdmin,listAuthors);
-router.patch("/updateauthor",authUser,authAdmin,updateAuthor);
-router.delete("/deleteauthor",authUser,authAdmin,deleteAuthor);
-
-//CRUD category
-router.post("/addcategory",authUser,authAdmin,addCategory);
-router.get("/listcategory",authUser,authAdmin,listCategory);
-router.patch("/updatecategory",authUser,authAdmin,updateCategory);
-router.delete("/deletecategory",authUser,authAdmin,deleteCategory);
-
-export {router as allRoutes};
+export { router as allRoutes };

@@ -1,34 +1,14 @@
-//title, author, category, ISBN, description, and price
-import mongoose, { mongo, Schema } from "mongoose"
-import { IBookModel } from "../interfaces/bookModelInterface";
+// models/book.ts
+import mongoose from 'mongoose';
 
-const bookSchema = new mongoose.Schema<IBookModel>({
-    title:{
-        type:String,
-        required:true
-    },
-    author:{
-        type:Schema.Types.ObjectId,ref:'author',
-        required:true
-    },
-    category:{
-        type:String,
-        required:true
-    }, 
-    ISBN:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    description:{
-        type:String,
-    },
-    price:{
-        type:Number,
-        required:true
-    }
-}) 
+const bookSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true },
+    category: { type: mongoose.Schema.Types.ObjectId,ref:'Category', required: true },
+    ISBN: { type: String, required: true },
+    description: { type: String },
+    price: { type: Number, required: true },
+});
 
-const bookModel = mongoose.model<IBookModel>('book',bookSchema);
-
-export default bookModel;
+const Book = mongoose.model('Book', bookSchema);
+export default Book;
